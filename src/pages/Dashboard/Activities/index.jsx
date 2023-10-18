@@ -1,3 +1,10 @@
+import { StyledTypography } from "..";
+
 export default function Activities() {
-  return 'Atividades: Em breve!';
+  
+  return (
+    <>
+      <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
+    </>
+  )
 }

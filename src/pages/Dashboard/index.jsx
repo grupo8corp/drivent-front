@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { Outlet } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
 import styled from 'styled-components';
 
 import EventInfoContext from '../../contexts/EventInfoContext';
@@ -32,4 +33,8 @@ const Container = styled.div`
     height: calc(100vh - 80px);
     padding: 20px;
   }
+`;
+
+export const StyledTypography = styled(Typography)`
+  margin-bottom: 20px!important;
 `;
