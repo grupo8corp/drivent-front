@@ -31,14 +31,14 @@ export default function Payment() {
     {
       id: 1,
       name: 'Com Hotel',
-      price: 0,
+      price: 350,
       includesHotel: true,
       isModality: true
     },
     {
       id: 2,
       name: 'Sem Hotel',
-      price: 350,
+      price: 0,
       includesHotel: false,
       isModality: true
     }
