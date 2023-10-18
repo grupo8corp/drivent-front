@@ -1,3 +1,9 @@
+import { StyledTypography } from "..";
+
 export default function Certificate() {
-  return 'Certificado: Em breve!';
+  return (
+    <>
+      <StyledTypography variant="h4">Certificado</StyledTypography>
+    </>
+  )
 }
