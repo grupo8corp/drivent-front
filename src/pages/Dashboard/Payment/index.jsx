@@ -1,160 +1,34 @@
-import styled from "styled-components";
-import { StyledTypography } from "..";
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import UserContext from "../../../contexts/UserContext";
-import { toast } from "react-toastify";
-import TicketCard from "../../../components/Dashboard/Payment/TicketCard";
+import styled from 'styled-components';
+import useEnrollment from '../../../hooks/api/useEnrollment';
+import NoticePage from './NoticePage';
+import TicketTypes from './SelectTicketTypes';
 
 export default function Payment() {
+  const { enrollment } = useEnrollment();
 
-  const { userData: { token } } = useContext(UserContext);
+return (
+    <Container>
+      <h1>Ingresso e pagamento</h1>
+      {!enrollment ? (
+        <NoticePage />
+      ) : (
+        <>
+          {' '}
+          <TicketTypes />
+        </>
+      )}
+    </Container>
+  );
+} 
 
-  const [ticket, setTicket] = useState(null);
-  const [ticketTypes, setTicketTypes] = useState([]);
-  const [enrollment, setEnrollment] = useState(null);
-  const [selectedTicketType, setSelectedTicketType] = useState({ isRemote: null });
-  const [selectedTicketModality, setSelectedTicketModality] = useState();
-  const ticketTypeModality = [
-    {
-      id: 1,
-      name: 'Com Hotel',
-      price: 0,
-      modality: true
-    },
-    {
-      id: 2,
-      name: 'Sem Hotel',
-      price: 350,
-      modality: true
-    }
-  ];
-  const finalPrice = selectedTicketModality ? selectedTicketModality.price + selectedTicketType.price : selectedTicketType.price;
-
-  useEffect(() => {
-    const getTicketTypes = async() => {
-      try{
-        const enrollment = await axios.get(`${import.meta.env.VITE_API_URL}/enrollments`, { headers: { Authorization: `Bearer ${token}` } });
-        setEnrollment(enrollment.data);
-        const ticketTypes = await axios.get(`${import.meta.env.VITE_API_URL}/tickets/types`, { headers: { Authorization: `Bearer ${token}` } });
-        setTicketTypes(ticketTypes.data);
-        const ticket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
-        setTicket(ticket.data);
-      }catch(err){
-        toast(err.response.data.message);
-      }
-    };
-    getTicketTypes();
-  }, []);
-
-  async function createTicket(){
-    try{
-      await axios.post(`${import.meta.env.VITE_API_URL}/tickets`, { ticketTypeId: selectedTicketType.id }, { headers: { Authorization: `Bearer ${token}` } });
-      const ticket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
-      setTicket(ticket.data);
-    }catch(err){
-      toast(err.response.data.message);
-    }
-  };
-
-  return (
-    <>
-      <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
-      {ticket
-        ?
-          <StyledP>
-            
-            IMPLEMENTAÇAO DO PAGAMENTO
-            
-          </StyledP>
-        :
-      !enrollment 
-        ?
-          <StyledP>
-            Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso
-          </StyledP>
-        :
-          <PaymentWrapper>
-            <>
-              <h5>Primeiro, escolha sua modalidade de ingresso</h5>
-              <TicketTypeWrapper>
-                {ticketTypes.map(ticketType => 
-                  <TicketCard key={ticketType.id} ticket={ticketType} ticketState = { { selectedTicketType, setSelectedTicketType, setSelectedTicketModality } }/>
-                )}
-              </TicketTypeWrapper>
-            </>
-            {selectedTicketType.isRemote !== null && !selectedTicketType.isRemote
-              &&
-              <>
-                <h5>Ótimo! Agora escolha sua modalidade de hospedagem</h5>
-                <TicketTypeWrapper>
-                  {ticketTypeModality.map(modality => 
-                    <TicketCard key={modality.id} ticket={modality} ticketState = { { selectedTicketModality, setSelectedTicketModality } }/>
-                  )}
-                </TicketTypeWrapper>
-              </>
-            }
-            {selectedTicketType.isRemote !== null && (selectedTicketModality || selectedTicketType.isRemote)
-              &&
-                <>
-                  <h5>Fechado! O total ficou em R$ {finalPrice}. Agora é só confirmar</h5>
-                  <button onClick={createTicket}>RESERVAR INGRESSO</button>
-                </>
-            }
-          </PaymentWrapper>
-        }
-    </>
-  )
-}
-
-const PaymentWrapper = styled.div`
+const Container = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  h5{
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 23px;
-    color: #8E8E8E;
-    margin-bottom: 20px;
+  > h1 {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 34px;
+    line-height: 40px;
+    margin-bottom: 40px;
   }
-  button{
-    cursor: pointer;
-    width: 162px;
-    height: 37px;
-    border-radius: 4px;
-    box-shadow: 0px 2px 10px 0px #00000040;
-    border: none;
-    font-family: Roboto;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 16px;
-    color: #000000;
-  }
-`;
-
-const TicketTypeWrapper = styled.div`
-  width: 100%;
-  overflow-x: auto;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  height: 145px;
-  margin-bottom: 40px;
-`;
-
-const StyledP = styled.p`
-  @media (max-width: 600px) {
-    width: 75%;
-  }
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 450px;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 23px;
-  text-align: center;
-  color: #8E8E8E;
 `;
