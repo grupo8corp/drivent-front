@@ -4,10 +4,10 @@ export default function({ ticketState: { selectedTicketType, setSelectedTicketTy
   return (
     <StyledTicketCard 
       changeColor = { { selectedTicket: selectedTicketType ? {...selectedTicketType} : {...selectedTicketModality}, id: ticket.id } } 
-      onClick={() => selectedTicketType ? (setSelectedTicketType(ticket), setSelectedTicketModality()) : setSelectedTicketModality(ticket) }
+      onClick={() => selectedTicketType ? (setSelectedTicketType(ticket), setSelectedTicketModality(null)) : setSelectedTicketModality(ticket) }
     >
       <p>{ticket.name}</p>
-      <p>{ticket.modality && '+ '}R$ {ticket.price}</p>
+      <p>{ticket.isModality && '+ '}R$ {ticket.price}</p>
     </StyledTicketCard>
   );
 };
