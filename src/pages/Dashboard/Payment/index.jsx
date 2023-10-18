@@ -4,18 +4,42 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import UserContext from "../../../contexts/UserContext";
 import { toast } from "react-toastify";
+import TicketCard from "../../../components/Dashboard/Payment/TicketCard";
 
 export default function Payment() {
 
   const { userData: { token } } = useContext(UserContext);
 
+  const [ticket, setTicket] = useState(null);
   const [ticketTypes, setTicketTypes] = useState([]);
+  const [enrollment, setEnrollment] = useState(null);
+  const [selectedTicketType, setSelectedTicketType] = useState({ isRemote: null });
+  const [selectedTicketModality, setSelectedTicketModality] = useState();
+  const ticketTypeModality = [
+    {
+      id: 1,
+      name: 'Com Hotel',
+      price: 0,
+      modality: true
+    },
+    {
+      id: 2,
+      name: 'Sem Hotel',
+      price: 350,
+      modality: true
+    }
+  ];
+  const finalPrice = selectedTicketModality ? selectedTicketModality.price + selectedTicketType.price : selectedTicketType.price;
 
   useEffect(() => {
     const getTicketTypes = async() => {
       try{
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/tickets/types`, { headers: { Authorization: `Bearer ${token}` } });
-        setTicketTypes(data);
+        const enrollment = await axios.get(`${import.meta.env.VITE_API_URL}/enrollments`, { headers: { Authorization: `Bearer ${token}` } });
+        setEnrollment(enrollment.data);
+        const ticketTypes = await axios.get(`${import.meta.env.VITE_API_URL}/tickets/types`, { headers: { Authorization: `Bearer ${token}` } });
+        setTicketTypes(ticketTypes.data);
+        const ticket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
+        setTicket(ticket.data);
       }catch(err){
         toast(err.response.data.message);
       }
@@ -23,39 +47,62 @@ export default function Payment() {
     getTicketTypes();
   }, []);
 
+  async function createTicket(){
+    try{
+      await axios.post(`${import.meta.env.VITE_API_URL}/tickets`, { ticketTypeId: selectedTicketType.id }, { headers: { Authorization: `Bearer ${token}` } });
+      const ticket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
+      setTicket(ticket.data);
+    }catch(err){
+      toast(err.response.data.message);
+    }
+  };
+
   return (
     <>
       <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
-      <PaymentWrapper>
-        <>
-          <p>Primeiro, escolha sua modalidade de ingresso</p>
-          <TicketTypeWrapper>
-            {ticketTypes.map(({ name, price }) => 
-              <div>
-                <p>{name}</p>
-                <p>{price}</p>
-              </div>
-            )}
-          </TicketTypeWrapper>
-        </>
-        <>
-          <p>Ótimo! Agora escolha sua modalidade de hospedagem</p>
-          <TicketTypeWrapper>
-            <div>
-              <p>nome</p>
-              <p>preço</p>
-            </div>
-            <div>
-              <p>nome</p>
-              <p>preço</p>
-            </div>
-          </TicketTypeWrapper>
-        </>
-        <>
-          <p>Fechado! O total ficou em R$ X. Agora é só confirmar:</p>
-          <button>RESERVAR INGRESSO</button>
-        </>
-      </PaymentWrapper>
+      {ticket
+        ?
+          <StyledP>
+            
+            IMPLEMENTAÇAO DO PAGAMENTO
+            
+          </StyledP>
+        :
+      !enrollment 
+        ?
+          <StyledP>
+            Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso
+          </StyledP>
+        :
+          <PaymentWrapper>
+            <>
+              <h5>Primeiro, escolha sua modalidade de ingresso</h5>
+              <TicketTypeWrapper>
+                {ticketTypes.map(ticketType => 
+                  <TicketCard key={ticketType.id} ticket={ticketType} ticketState = { { selectedTicketType, setSelectedTicketType, setSelectedTicketModality } }/>
+                )}
+              </TicketTypeWrapper>
+            </>
+            {selectedTicketType.isRemote !== null && !selectedTicketType.isRemote
+              &&
+              <>
+                <h5>Ótimo! Agora escolha sua modalidade de hospedagem</h5>
+                <TicketTypeWrapper>
+                  {ticketTypeModality.map(modality => 
+                    <TicketCard key={modality.id} ticket={modality} ticketState = { { selectedTicketModality, setSelectedTicketModality } }/>
+                  )}
+                </TicketTypeWrapper>
+              </>
+            }
+            {selectedTicketType.isRemote !== null && (selectedTicketModality || selectedTicketType.isRemote)
+              &&
+                <>
+                  <h5>Fechado! O total ficou em R$ {finalPrice}. Agora é só confirmar</h5>
+                  <button onClick={createTicket}>RESERVAR INGRESSO</button>
+                </>
+            }
+          </PaymentWrapper>
+        }
     </>
   )
 }
@@ -64,7 +111,7 @@ const PaymentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  p{
+  h5{
     font-size: 20px;
     font-weight: 400;
     line-height: 23px;
@@ -94,26 +141,20 @@ const TicketTypeWrapper = styled.div`
   gap: 20px;
   height: 145px;
   margin-bottom: 40px;
-  div{
-    cursor: pointer;
-    border: #CECECE 1px solid;
-    border-radius: 20px;
-    min-width: 145px;
-    height: 145px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    p{
-      margin-bottom: unset;
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 19px;
-      color: #454545;
-    }
-    p:nth-child(2){
-      font-size: 14px;
-      color: #898989;
-    }
+`;
+
+const StyledP = styled.p`
+  @media (max-width: 600px) {
+    width: 75%;
   }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 23px;
+  text-align: center;
+  color: #8E8E8E;
 `;
