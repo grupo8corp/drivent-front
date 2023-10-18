@@ -1,13 +1,9 @@
-import styled from "styled-components";
-import { StyledTypography } from "..";
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import UserContext from "../../../contexts/UserContext";
-import { toast } from "react-toastify";
-import TicketCard from "../../../components/Dashboard/Payment/TicketCard";
+import styled from 'styled-components';
+import useEnrollment from '../../../hooks/api/useEnrollment';
+import NoticePage from './NoticePage';
+import TicketTypes from './SelectTicketTypes';
 
 export default function Payment() {
-
   const { userData: { token } } = useContext(UserContext);
 
   const [enrollment, setEnrollment] = useState(null);
@@ -132,51 +128,10 @@ export default function Payment() {
 const PaymentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  h5{
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 23px;
-    color: #8E8E8E;
-    margin-bottom: 20px;
+  > h1 {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 34px;
+    line-height: 40px;
+    margin-bottom: 40px;
   }
-  button{
-    cursor: pointer;
-    width: 162px;
-    height: 37px;
-    border-radius: 4px;
-    box-shadow: 0px 2px 10px 0px #00000040;
-    border: none;
-    font-family: Roboto;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 16px;
-    color: #000000;
-  }
-`;
-
-const TicketTypeWrapper = styled.div`
-  width: 100%;
-  overflow-x: auto;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  height: 145px;
-  margin-bottom: 40px;
-`;
-
-const StyledP = styled.p`
-  @media (max-width: 600px) {
-    width: 75%;
-  }
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 450px;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 23px;
-  text-align: center;
-  color: #8E8E8E;
 `;
