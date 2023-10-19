@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
 export default function DetailsCard({ userTicket }) {
-    const descrpition = userTicket.TicketType.name.replace(/(com|sem)/g, '+ $1');
-    const price = userTicket.TicketType.price;
+    //const descrpition = userTicket.TicketType.name.replace(/(com|sem)/g, '+ $1');
+    //const price = userTicket.TicketType.price;
     return (
         <Container>
             <div>
-                <p>{descrpition}</p>
-                <span>{`R$ ${price}`}</span>
+                <p>teste</p>
+                <span>{`R$ 500`}</span>
             </div>
         </Container>
     );
