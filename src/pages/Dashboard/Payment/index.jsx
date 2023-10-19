@@ -6,6 +6,7 @@ import axios from 'axios';
 import TicketCard from '../../../components/Dashboard/Payment/TicketCard';
 import { toast } from 'react-toastify';
 import { renderTicketModalities, renderTicketTypes } from '../../../constants/renderTickets';
+import CreditCardsPage from './CreditCardsPage/CreditCardsPage';
 
 export default function Payment() {
   const { userData: { token } } = useContext(UserContext);
@@ -52,12 +53,7 @@ export default function Payment() {
     <>
       <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
 
-      {/* botei esse styled component StyledP só para sentralizar o texto, pode substitui-lo como vc preferir */}
-      <StyledP>
-
-        IMPLEMENTAÇAO DO PAGAMENTO
-
-      </StyledP>
+      <CreditCardsPage/>
     </>
   );
 
