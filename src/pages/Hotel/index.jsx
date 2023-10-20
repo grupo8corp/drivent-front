@@ -1,30 +1,31 @@
-import { useContext } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import styled from 'styled-components';
-import { toast } from "react-toastify";
-import EventInfoContext from '../../contexts/EventInfoContext';
+//import { toast } from "react-toastify";
 import NavigationBar from '../../components/Dashboard/NavigationBar';
 import DashboardLayout from '../../layouts/Dashboard';
 import UserContext from '../../contexts/UserContext'
-import { getHotels, hotels } from '../../services/hotelApi';
+import { getHotels } from '../../services/hotelApi';
 import HotelCard from '../../components/HotelCard';
+import EventInfoContext from '../../contexts/EventInfoContext';
 
 export default function Hotel() {
   const { userData: { token } } = useContext(UserContext);
   const [hotels, setHotels] = useState(undefined)
-
+  const { eventInfo } = useContext(EventInfoContext);
+  const [selectedHotel, setSelectedHotel] = useState( null );
+  
   useEffect( () => {
-    const hotels = getHotels(token)
-    setHotels(hotels)
-}, [])
+    const gethotels = getHotels(token)
+    setHotels(gethotels)
+}, [token])
 
   return (
     <>
         <DashboardLayout background={eventInfo.backgroundImageUrl}>
         <NavigationBar />
         <Container>
-          {hotels.map(hotel => (<HotelCard key={hotel.id} hotel={hotel} />))}
+          {hotels.map(hotel => (<HotelCard key={hotel.id} hotel={hotel} hotelState={ { selectedHotel, setSelectedHotel } } />))}
         </Container>
         </DashboardLayout>
     </>
