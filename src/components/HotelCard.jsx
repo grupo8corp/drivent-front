@@ -1,13 +1,23 @@
 import styled from "styled-components";
-import { getRooms, rooms } from "../services/hotelApi";
+import { getRooms } from "../services/hotelApi";
+import { useContext, useEffect, useState } from "react";
+import UserContext from "../contexts/UserContext";
 
 export default function HotelCard(hotel) {
   const { userData: { token } } = useContext(UserContext);
   const {id, name, image } = hotel;
-  const rooms = getRooms(token, id)
+  const [rooms, setRooms] = useState([]);
+
+  useEffect( () => {
+    async function findRooms(token, id) {
+        const allrooms = await getRooms(token, id);
+        setRooms(allrooms)
+      }
+      findRooms(token, id);
+}, [])
   const vacancy = rooms.reduce((accumulator, room) => accumulator + room.capacity, 0);
 
-  const roomtypes = rooms.map((room) => {
+  let roomtypes = rooms.map((room) => {
     if (room.capacity === 1) roomtypes += 'Single,' 
     if (room.capacity === 2) roomtypes += 'Double,'
     if (room.capacity === 3) roomtypes += ' Triple'
@@ -15,15 +25,12 @@ export default function HotelCard(hotel) {
   });
 
   return (
-    <StyledHotelCard 
-      changeColor = { { selectedTicket: selectedTicketType ? {...selectedTicketType} : {...selectedTicketModality}, id: ticket.id } } 
-      onClick={() => selectedTicketType ? (setSelectedTicketType(ticket), setSelectedTicketModality(null)) : setSelectedTicketModality(ticket) }
-    >
+    <StyledHotelCard >
       <img src={image} />
       <h1>{name}</h1>
       <div> 
         <h3>tipos de acomodação:</h3>
-        <p>x</p>
+        <p>{roomtypes}</p>
       </div>
       <div> 
         <h3>vagas disponíveis:</h3>
@@ -31,7 +38,7 @@ export default function HotelCard(hotel) {
       </div>
     </StyledHotelCard>
   );
-};
+}
 
 const StyledHotelCard = styled.div`
   cursor: pointer;
