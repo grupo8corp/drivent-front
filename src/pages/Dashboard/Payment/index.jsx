@@ -53,7 +53,7 @@ export default function Payment() {
     <>
       <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
 
-      <CreditCardsPage/>
+      <CreditCardsPage userTicket={ {...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id} } />
     </>
   );
 

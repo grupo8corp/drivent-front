@@ -55,7 +55,7 @@ export default function FormCard({ setButtonClicked, userTicket }) {
         }
 
         const body = {
-            ticketId: userTicket.id,
+            ticketId: userTicket.ticketId,
             cardData: {
                 issuer: form.issuer,
                 number: form.number,
