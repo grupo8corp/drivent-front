@@ -7,6 +7,7 @@ import TicketCard from '../../../components/Dashboard/Payment/TicketCard';
 import { toast } from 'react-toastify';
 import { renderTicketModalities, renderTicketTypes } from '../../../constants/renderTickets';
 import CreditCardsPage from './CreditCardsPage/CreditCardsPage';
+import DetailsCard from './CreditCardsPage/DetailsCard';
 
 export default function Payment() {
   const { userData: { token } } = useContext(UserContext);
@@ -18,15 +19,15 @@ export default function Payment() {
   const [selectedTicketModality, setSelectedTicketModality] = useState(null);
 
   useEffect(() => {
-    const fetchData = async() => {
-      try{
+    const fetchData = async () => {
+      try {
         const enrollment = await axios.get(`${import.meta.env.VITE_API_URL}/enrollments`, { headers: { Authorization: `Bearer ${token}` } });
         setEnrollment(enrollment.data);
         const ticketTypes = await axios.get(`${import.meta.env.VITE_API_URL}/tickets/types`, { headers: { Authorization: `Bearer ${token}` } });
         setTicketTypes(ticketTypes.data);
         const ticket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
         setTicket(ticket.data);
-      }catch({ response: { data: { message } } }){
+      } catch ({ response: { data: { message } } }) {
         if (message === 'No result for this search!') return console.log(message);
         toast(message);
       }
@@ -34,70 +35,81 @@ export default function Payment() {
     fetchData();
   }, []);
 
-  async function createTicket(){
+  async function createTicket() {
     if (!ticketTypes || ticketTypes.length === 0) return;
     const { id } = ticketTypes.find(({ isRemote, includesHotel }) => {
       if (selectedTicketType.isRemote) return isRemote;
       if (!selectedTicketType.isRemote) return includesHotel === selectedTicketModality.includesHotel;
     });
-    try{
+    try {
       await axios.post(`${import.meta.env.VITE_API_URL}/tickets`, { ticketTypeId: id }, { headers: { Authorization: `Bearer ${token}` } });
       const ticket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
       setTicket(ticket.data);
-    }catch(err){
+    } catch (err) {
       toast(err.response.data.message);
     }
   };
 
   if (ticket) return (
-    <>
+    <TicketsChoosed>
       <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
 
-      <CreditCardsPage userTicket={ {...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id} } />
-    </>
+      <h2>Ingresso escolhido</h2>
+      <DetailsCard userTicket={{ ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id }} selectedTicketType={selectedTicketType} selectedTicketModality={selectedTicketModality} />
+
+      <CreditCardsPage userTicket={{ ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id }} />
+    </TicketsChoosed>
   );
 
   return (
     <>
       <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
-      {!enrollment 
+      {!enrollment
         ?
-          <StyledP>
-            Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso
-          </StyledP>
+        <StyledP>
+          Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso
+        </StyledP>
         :
-          <PaymentWrapper ticketTypes={ticketTypes}>
+        <PaymentWrapper ticketTypes={ticketTypes}>
+          <>
+            <h5>Primeiro, escolha sua modalidade de ingresso</h5>
+            <TicketTypeWrapper>
+              {renderTicketTypes.map(ticketType =>
+                <TicketCard key={ticketType.id} ticket={ticketType} ticketState={{ selectedTicketType, setSelectedTicketType, setSelectedTicketModality }} />
+              )}
+            </TicketTypeWrapper>
+          </>
+          {selectedTicketType.isRemote !== null && !selectedTicketType.isRemote
+            &&
             <>
-              <h5>Primeiro, escolha sua modalidade de ingresso</h5>
+              <h5>Ótimo! Agora escolha sua modalidade de hospedagem</h5>
               <TicketTypeWrapper>
-                {renderTicketTypes.map(ticketType => 
-                  <TicketCard key={ticketType.id} ticket={ticketType} ticketState = { { selectedTicketType, setSelectedTicketType, setSelectedTicketModality } }/>
+                {renderTicketModalities.map(modality =>
+                  <TicketCard key={modality.id} ticket={modality} ticketState={{ selectedTicketModality, setSelectedTicketModality }} />
                 )}
               </TicketTypeWrapper>
             </>
-            {selectedTicketType.isRemote !== null && !selectedTicketType.isRemote
-              &&
-                <>
-                  <h5>Ótimo! Agora escolha sua modalidade de hospedagem</h5>
-                  <TicketTypeWrapper>
-                    {renderTicketModalities.map(modality => 
-                      <TicketCard key={modality.id} ticket={modality} ticketState = { { selectedTicketModality, setSelectedTicketModality } }/>
-                    )}
-                  </TicketTypeWrapper>
-                </>
-            }
-            {selectedTicketType.isRemote !== null && (selectedTicketModality || selectedTicketType.isRemote)
-              &&
-                <>
-                  <h5>Fechado! O total ficou em R$ {selectedTicketModality !== null ? selectedTicketModality.price + selectedTicketType.price : selectedTicketType.price}. Agora é só confirmar</h5>
-                  <button onClick={createTicket}>{!ticketTypes ? 'CARREGANDO...' : (ticketTypes.length === 0 ? 'INGRESSOS INDISPONIVEIS' : 'RESERVAR INGRESSO')}</button>
-                </>
-            }
-          </PaymentWrapper>
-        }
+          }
+          {selectedTicketType.isRemote !== null && (selectedTicketModality || selectedTicketType.isRemote)
+            &&
+            <>
+              <h5>Fechado! O total ficou em R$ {selectedTicketModality !== null ? selectedTicketModality.price + selectedTicketType.price : selectedTicketType.price}. Agora é só confirmar</h5>
+              <button onClick={createTicket}>{!ticketTypes ? 'CARREGANDO...' : (ticketTypes.length === 0 ? 'INGRESSOS INDISPONIVEIS' : 'RESERVAR INGRESSO')}</button>
+            </>
+          }
+        </PaymentWrapper>
+      }
     </>
   )
 }
+
+const TicketsChoosed = styled.div`
+  h2 {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 20px;
+    color: #8E8E8E;
+  }
+`
 
 const PaymentWrapper = styled.div`
   display: flex;
@@ -111,7 +123,7 @@ const PaymentWrapper = styled.div`
     margin-bottom: 20px;
   }
   button{
-    cursor: ${({ticketTypes}) => !ticketTypes || ticketTypes.length === 0 ? 'default' : 'pointer'};
+    cursor: ${({ ticketTypes }) => !ticketTypes || ticketTypes.length === 0 ? 'default' : 'pointer'};
     width: 162px;
     height: 37px;
     border-radius: 4px;
