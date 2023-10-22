@@ -9,7 +9,7 @@ export default function CreditCardsPage({ userTicket }) {
   return (
     <Container>
       <h2>Pagamento</h2>
-      {buttonClicked ? (
+      {buttonClicked || userTicket.ticketStatus === 'PAID' ? (
         <FinalizePayment>
           <IoCheckmarkCircleSharp />
           <div>
