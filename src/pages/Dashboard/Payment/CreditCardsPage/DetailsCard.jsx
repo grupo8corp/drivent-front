@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 
-export default function DetailsCard({ userTicket }) {
-    //const descrpition = userTicket.TicketType.name.replace(/(com|sem)/g, '+ $1');
-    //const price = userTicket.TicketType.price;
-    return (
-        <Container>
-            <div>
-                <p>teste</p>
-                <span>{`R$ 500`}</span>
-            </div>
-        </Container>
-    );
+export default function DetailsCard({ userTicket, selectedTicketType, selectedTicketModality }) {
+  const price = userTicket.price;
+  const isOnline = selectedTicketType.isRemote !== null ? selectedTicketType.isRemote : false;
+  const hasHotel = selectedTicketModality !== null ? selectedTicketModality.includesHotel : false;
+
+  return (
+    <Container>
+      <div>
+        <p>{isOnline ? 'Online' : 'Presencial'} + {hasHotel ? 'Com Hotel' : 'Sem Hotel'}</p>
+        <span>{`R$ ${price}`}</span>
+      </div>
+    </Container>
+  );
 }
 
 const Container = styled.div`
@@ -22,20 +24,24 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
+  margin-top: 20px;
+
   > div {
     text-align: center;
-    > p {
-      font-family: "Roboto","Helvetica","Arial",sans-serif;
-      font-size: 16px;
-      line-height: 19px;
-      color: #454545;
-      margin-bottom: 8px;
-    }
-    > span {
-      font-family: "Roboto","Helvetica","Arial",sans-serif;
-      font-size: 14px;
-      line-height: 16px;
-      color: #898989;
-    }
+
+  > p {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 16px;
+    line-height: 19px;
+    color: #454545;
+    margin-bottom: 8px;
   }
+
+  > span {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    color: #898989;
+  }
+}
 `;
