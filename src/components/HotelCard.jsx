@@ -1,25 +1,27 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-export default function HotelCard({hotel}) {
-  const {id, name, image, type, remainingVacancies } = hotel;
+export default function HotelCard({ hotel, hotelState, room }) {
+  const { id, name, image, type, remainingVacancies } = hotel;
+  console.log(room);
 
-//const vacancy = rooms.reduce((accumulator, room) => accumulator + room.capacity, 0);
-//const vacancy = findEmptyBeds(rooms);
-//   let roomtypes = rooms.map((room) => {
-//     if (room.capacity === 1) roomtypes += 'Single,' 
-//     if (room.capacity === 2) roomtypes += 'Double,'
-//     if (room.capacity === 3) roomtypes += ' Triple'
-//     if (room.capacity === 4) roomtypes += 'Quadruple'
-//   });
+  //const vacancy = rooms.reduce((accumulator, room) => accumulator + room.capacity, 0);
+  //const vacancy = findEmptyBeds(rooms);
+  //   let roomtypes = rooms.map((room) => {
+  //     if (room.capacity === 1) roomtypes += 'Single,'
+  //     if (room.capacity === 2) roomtypes += 'Double,'
+  //     if (room.capacity === 3) roomtypes += ' Triple'
+  //     if (room.capacity === 4) roomtypes += 'Quadruple'
+  //   });
+
   return (
-    <StyledHotelCard >
+    <StyledHotelCard onClick={() => hotelState.setSelectedHotel(id)} IsSelected={hotelState.selectedHotel}>
       <img src={image} />
       <h1>{name}</h1>
-      <div> 
+      <div>
         <h3>tipos de acomodação:</h3>
         <p>{type}</p>
       </div>
-      <div> 
+      <div>
         <h3>vagas disponíveis:</h3>
         <p>{remainingVacancies || 0}</p>
       </div>
@@ -30,10 +32,10 @@ export default function HotelCard({hotel}) {
 const StyledHotelCard = styled.div`
   margin-right: 15px;
   cursor: pointer;
-  background-color: #FFFFFF;
-  border: #CECECE 1px solid;
+  background-color: ${({ IsSelected }) => (IsSelected != null ? '#FFEED2' : '#EBEBEB')};
+  border: #cecece 1px solid;
   border-radius: 20px;
-  min-width: 200px;
+  width: 200px;
   height: 265px;
   display: flex;
   flex-direction: column;
@@ -47,7 +49,7 @@ const StyledHotelCard = styled.div`
     line-height: 19px;
     color: #454545;
   }
-  h3{
+  h3 {
     margin-top: 7px;
     margin-bottom: unset;
     font-size: 12px;
@@ -55,7 +57,7 @@ const StyledHotelCard = styled.div`
     line-height: 19px;
     color: #454545;
   }
-  p{
+  p {
     text-align: center;
     margin-top: 3px;
     font-size: 12px;
@@ -65,4 +67,4 @@ const StyledHotelCard = styled.div`
     height: 110px;
     width: 168px;
   }
-`
+`;
