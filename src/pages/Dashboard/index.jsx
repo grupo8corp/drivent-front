@@ -38,3 +38,19 @@ const Container = styled.div`
 export const StyledTypography = styled(Typography)`
   margin-bottom: 20px!important;
 `;
+
+export const StyledP = styled.p`
+  @media (max-width: 600px) {
+    width: 75%;
+  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 23px;
+  text-align: center;
+  color: #8E8E8E;
+`;

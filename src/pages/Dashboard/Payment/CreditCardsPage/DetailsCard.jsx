@@ -1,15 +1,10 @@
 import styled from 'styled-components';
 
-export default function DetailsCard({ userTicket, selectedTicketType, selectedTicketModality }) {
-  const price = userTicket.price;
-  const isOnline = selectedTicketType.isRemote !== null ? selectedTicketType.isRemote : false;
-  const hasHotel = selectedTicketModality !== null ? selectedTicketModality.includesHotel : false;
-
-  console.log(userTicket)
+export default function DetailsCard({ userTicket: { isRemote, includesHotel, price } }) {
   return (
     <Container>
       <div>
-        <p>{userTicket.isRemote ? 'Online' : 'Presencial'} + {userTicket.includesHotel ? 'Com Hotel' : 'Sem Hotel'}</p>
+        <p>{isRemote ? 'Online' : 'Presencial'} + {includesHotel ? 'Com Hotel' : 'Sem Hotel'}</p>
         <span>{`R$ ${price}`}</span>
       </div>
     </Container>
