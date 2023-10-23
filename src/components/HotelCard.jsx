@@ -14,7 +14,7 @@ export default function HotelCard({ hotel, hotelState, room }) {
   //   });
 
   return (
-    <StyledHotelCard onClick={() => hotelState.setSelectedHotel(id)} IsSelected={hotelState.selectedHotel}>
+    <StyledHotelCard onClick={() => hotelState.setSelectedHotel(id)} IsSelected={hotelState.selectedHotel == id}>
       <img src={image} />
       <h1>{name}</h1>
       <div>
@@ -32,7 +32,7 @@ export default function HotelCard({ hotel, hotelState, room }) {
 const StyledHotelCard = styled.div`
   margin-right: 15px;
   cursor: pointer;
-  background-color: ${({ IsSelected }) => (IsSelected != null ? '#FFEED2' : '#EBEBEB')};
+  background-color: ${({ IsSelected }) => (IsSelected ? '#FFEED2' : '#EBEBEB')};
   border: #cecece 1px solid;
   border-radius: 20px;
   width: 200px;
