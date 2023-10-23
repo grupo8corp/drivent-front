@@ -50,16 +50,20 @@ export default function Payment() {
     }
   };
 
-  if (ticket) return (
-    <TicketsChoosed>
-      <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
+  if (ticket) {
+    const ticketProp = { ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id, ticketStatus: ticket.status };
+    return (
+      <TicketsChoosed>
+        <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
 
-      <h2>Ingresso escolhido</h2>
-      <DetailsCard userTicket={{ ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id }} selectedTicketType={selectedTicketType} selectedTicketModality={selectedTicketModality} />
+        <h2>Ingresso escolhido</h2>
+        <DetailsCard userTicket={ticketProp} selectedTicketType={selectedTicketType} selectedTicketModality={selectedTicketModality} />
 
-      <CreditCardsPage userTicket={{ ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id }} />
-    </TicketsChoosed>
-  );
+        <CreditCardsPage userTicket={ticketProp} />
+      </TicketsChoosed>
+    );
+  }
+
 
   return (
     <>
