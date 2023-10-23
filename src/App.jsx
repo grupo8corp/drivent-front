@@ -20,6 +20,7 @@ import { EventInfoProvider } from './contexts/EventInfoContext';
 import { UserProvider } from './contexts/UserContext';
 
 import useToken from './hooks/useToken';
+import { TicketProvider } from './contexts/TicketContext';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
       <ToastContainer />
       <EventInfoProvider>
         <UserProvider>
+          <TicketProvider>
           <Router>
             <Routes>
               <Route path="/" element={<Countdown />} />
@@ -50,6 +52,7 @@ export default function App() {
               </Route>
             </Routes>
           </Router>
+          </TicketProvider>
         </UserProvider>
       </EventInfoProvider>
     </>

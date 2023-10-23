@@ -8,15 +8,19 @@ import { toast } from 'react-toastify';
 import { renderTicketModalities, renderTicketTypes } from '../../../constants/renderTickets';
 import CreditCardsPage from './CreditCardsPage/CreditCardsPage';
 import DetailsCard from './CreditCardsPage/DetailsCard';
+import TicketContext from '../../../contexts/TicketContext';
 
 export default function Payment() {
   const { userData: { token } } = useContext(UserContext);
 
   const [enrollment, setEnrollment] = useState(null);
-  const [ticket, setTicket] = useState(null);
-  const [ticketTypes, setTicketTypes] = useState(null);
+  const {ticket, setTicket} = useContext(TicketContext);  
+  const [ticketTypes, setTicketTypes] = useState([]);
   const [selectedTicketType, setSelectedTicketType] = useState({ isRemote: null });
   const [selectedTicketModality, setSelectedTicketModality] = useState(null);
+
+  console.log(ticket)
+  console.log(ticketTypes);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,8 +29,9 @@ export default function Payment() {
         setEnrollment(enrollment.data);
         const ticketTypes = await axios.get(`${import.meta.env.VITE_API_URL}/tickets/types`, { headers: { Authorization: `Bearer ${token}` } });
         setTicketTypes(ticketTypes.data);
-        const ticket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
-        setTicket(ticket.data);
+        const UserTicket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
+        setTicket(UserTicket.data);
+        
       } catch ({ response: { data: { message } } }) {
         if (message === 'No result for this search!') return console.log(message);
         toast(message);
@@ -35,6 +40,7 @@ export default function Payment() {
     fetchData();
   }, []);
 
+  
   async function createTicket() {
     if (!ticketTypes || ticketTypes.length === 0) return;
     const { id } = ticketTypes.find(({ isRemote, includesHotel }) => {
@@ -51,6 +57,8 @@ export default function Payment() {
   };
 
   if (ticket) {
+    console.log(ticketTypes)
+    console.log(ticket)
     const ticketProp = { ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id, ticketStatus: ticket.status };
     return (
       <TicketsChoosed>

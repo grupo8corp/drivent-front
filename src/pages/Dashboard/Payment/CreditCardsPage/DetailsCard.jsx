@@ -5,10 +5,11 @@ export default function DetailsCard({ userTicket, selectedTicketType, selectedTi
   const isOnline = selectedTicketType.isRemote !== null ? selectedTicketType.isRemote : false;
   const hasHotel = selectedTicketModality !== null ? selectedTicketModality.includesHotel : false;
 
+  console.log(userTicket)
   return (
     <Container>
       <div>
-        <p>{isOnline ? 'Online' : 'Presencial'} + {hasHotel ? 'Com Hotel' : 'Sem Hotel'}</p>
+        <p>{userTicket.isRemote ? 'Online' : 'Presencial'} + {userTicket.includesHotel ? 'Com Hotel' : 'Sem Hotel'}</p>
         <span>{`R$ ${price}`}</span>
       </div>
     </Container>
