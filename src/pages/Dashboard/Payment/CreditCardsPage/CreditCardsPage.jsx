@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import FormCard from './FormCard';
 import { IoCheckmarkCircleSharp } from 'react-icons/io5';
-import { useState } from 'react';
+import { useContext } from 'react';
+import TicketContext from '../../../../contexts/TicketContext';
 
 export default function CreditCardsPage({ userTicket }) {
-  const [buttonClicked, setButtonClicked] = useState(false);
+  const {buttonClicked, setButtonClicked} = useContext(TicketContext);
 
   return (
     <Container>

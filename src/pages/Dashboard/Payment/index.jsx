@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import UserContext from '../../../contexts/UserContext';
-import { StyledTypography } from "..";
+import { StyledP, StyledTypography } from "..";
 import axios from 'axios';
 import TicketCard from '../../../components/Dashboard/Payment/TicketCard';
 import { toast } from 'react-toastify';
@@ -12,35 +12,24 @@ import TicketContext from '../../../contexts/TicketContext';
 
 export default function Payment() {
   const { userData: { token } } = useContext(UserContext);
+  const { ticket, setTicket, ticketTypes, ticketProp } = useContext(TicketContext);  
 
   const [enrollment, setEnrollment] = useState(null);
-  const {ticket, setTicket} = useContext(TicketContext);  
-  const [ticketTypes, setTicketTypes] = useState([]);
   const [selectedTicketType, setSelectedTicketType] = useState({ isRemote: null });
   const [selectedTicketModality, setSelectedTicketModality] = useState(null);
-
-  console.log(ticket)
-  console.log(ticketTypes);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const enrollment = await axios.get(`${import.meta.env.VITE_API_URL}/enrollments`, { headers: { Authorization: `Bearer ${token}` } });
         setEnrollment(enrollment.data);
-        const ticketTypes = await axios.get(`${import.meta.env.VITE_API_URL}/tickets/types`, { headers: { Authorization: `Bearer ${token}` } });
-        setTicketTypes(ticketTypes.data);
-        const UserTicket = await axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } });
-        setTicket(UserTicket.data);
-        
       } catch ({ response: { data: { message } } }) {
-        if (message === 'No result for this search!') return console.log(message);
         toast(message);
       }
     };
     fetchData();
   }, []);
 
-  
   async function createTicket() {
     if (!ticketTypes || ticketTypes.length === 0) return;
     const { id } = ticketTypes.find(({ isRemote, includesHotel }) => {
@@ -57,15 +46,12 @@ export default function Payment() {
   };
 
   if (ticket) {
-    console.log(ticketTypes)
-    console.log(ticket)
-    const ticketProp = { ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id, ticketStatus: ticket.status };
     return (
       <TicketsChoosed>
         <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
 
         <h2>Ingresso escolhido</h2>
-        <DetailsCard userTicket={ticketProp} selectedTicketType={selectedTicketType} selectedTicketModality={selectedTicketModality} />
+        <DetailsCard userTicket={ticketProp} />
 
         <CreditCardsPage userTicket={ticketProp} />
       </TicketsChoosed>
@@ -157,20 +143,4 @@ const TicketTypeWrapper = styled.div`
   gap: 20px;
   height: 145px;
   margin-bottom: 40px;
-`;
-
-const StyledP = styled.p`
-  @media (max-width: 600px) {
-    width: 75%;
-  }
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 450px;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 23px;
-  text-align: center;
-  color: #8E8E8E;
 `;
