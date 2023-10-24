@@ -51,7 +51,7 @@ export default function Activities() {
           <StyledP>Como você escolheu a modalidade online, não precisa escolher atividades.</StyledP>
         :
           <ActivitiesContainer>
-            <h5>Primeiro, filtre pelo dia do evento: </h5>
+            {selectedDay.id === null && <h5>Primeiro, filtre pelo dia do evento:</h5>}
             <DaysWrapper>
               {renderDays.map((day) => <DayCard 
                 key={day.id} 
