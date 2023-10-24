@@ -2,16 +2,6 @@ import styled from 'styled-components';
 
 export default function HotelCard({ hotel, hotelState, room }) {
   const { id, name, image, type, remainingVacancies } = hotel;
-  console.log(room);
-
-  //const vacancy = rooms.reduce((accumulator, room) => accumulator + room.capacity, 0);
-  //const vacancy = findEmptyBeds(rooms);
-  //   let roomtypes = rooms.map((room) => {
-  //     if (room.capacity === 1) roomtypes += 'Single,'
-  //     if (room.capacity === 2) roomtypes += 'Double,'
-  //     if (room.capacity === 3) roomtypes += ' Triple'
-  //     if (room.capacity === 4) roomtypes += 'Quadruple'
-  //   });
 
   return (
     <StyledHotelCard onClick={() => hotelState.setSelectedHotel(id)} IsSelected={hotelState.selectedHotel == id}>

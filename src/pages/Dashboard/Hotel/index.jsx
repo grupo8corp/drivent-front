@@ -69,7 +69,7 @@ export default function Hotel() {
       </Container>
       <div>
         {selectedHotel && <Rooms hotelId={selectedHotel} />}
-        </div>
+      </div>
     </>
   );
 }
