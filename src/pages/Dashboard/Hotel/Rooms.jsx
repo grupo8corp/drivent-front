@@ -40,5 +40,6 @@ const RoomsContainer = styled.div`
   > div {
     display: flex;
     gap: 17px;
+    padding: 30px;
   }
 `;
