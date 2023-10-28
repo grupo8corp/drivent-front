@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
-export default function HotelCard({ hotel, hotelState, room }) {
+export default function HotelCard({ hotel, hotelState }) {
   const { id, name, image, type, remainingVacancies } = hotel;
-  console.log(room);
 
   //const vacancy = rooms.reduce((accumulator, room) => accumulator + room.capacity, 0);
   //const vacancy = findEmptyBeds(rooms);
@@ -14,7 +13,7 @@ export default function HotelCard({ hotel, hotelState, room }) {
   //   });
 
   return (
-    <StyledHotelCard onClick={() => hotelState.setSelectedHotel(id)} IsSelected={hotelState.selectedHotel == id}>
+    <StyledHotelCard onClick={() => hotelState.setSelectedHotel(id)} $selected={hotelState.selectedHotel == id}>
       <img src={image} />
       <h1>{name}</h1>
       <div>
@@ -29,14 +28,16 @@ export default function HotelCard({ hotel, hotelState, room }) {
   );
 }
 
-const StyledHotelCard = styled.div`
+
+export const StyledHotelCard = styled.div`
   margin-right: 15px;
   cursor: pointer;
-  background-color: ${({ IsSelected }) => (IsSelected ? '#FFEED2' : '#EBEBEB')};
+  background-color: ${({ $selected }) => ($selected ? '#FFEED2' : '#EBEBEB')};
   border: #cecece 1px solid;
   border-radius: 20px;
   width: 200px;
   height: 265px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -66,5 +67,6 @@ const StyledHotelCard = styled.div`
   img {
     height: 110px;
     width: 168px;
+    flex-shrink: 0;
   }
 `;
