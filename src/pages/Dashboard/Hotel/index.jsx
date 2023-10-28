@@ -73,17 +73,21 @@ export default function Hotel() {
         <h5>Você já escolheu seu quarto:</h5>
         <div>
           <StyledHotelCard $selected={true}>
-            <img src={booking.Room.Hotel.image} />
-            <h1>{booking.Room.Hotel.name}</h1>
+            <img src={booking.Hotel.image} />
+            <h1>{booking.Hotel.name}</h1>
             <div>
               <h3>Quarto reservado:</h3>
               <p>
-                {booking.Room?.name} ({type[booking.Room.capacity]})
+                {booking.Room.name} ({type[booking.Room.capacity]})
               </p>
             </div>
             <div>
               <h3>Pessoas no seu quarto</h3>
-              <p>Você e mais {Number(booking.Room?.capacity) - 1}</p>
+              <p>
+                {Number(booking.Room.bookingCount) === 1
+                  ? 'Somente Você'
+                  : `Você e mais ${Number(booking.Room.bookingCount) - 1}`}
+              </p>
             </div>
           </StyledHotelCard>
         </div>
