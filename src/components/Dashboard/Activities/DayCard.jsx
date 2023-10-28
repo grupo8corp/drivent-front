@@ -1,12 +1,26 @@
+import { useEffect } from "react";
 import styled from "styled-components";
 
-export default function({ activities, dayState: { selectedDay, setSelectedDay }, day: { fullDay, id } }){
+export default function DayCard({ setReloadActivities,
+  activities,
+  dayState: { selectedDay, setSelectedDay },
+  day: { fullDay, id },
+}) {
+  // useEffect(() => {
+  //   setSelectedDay({ activities: [...activities], id })
+  // }, [])
+
   return (
-    <StyledDayCard changeColor={{ selectedDay, id }} onClick={() => setSelectedDay({activities: [...activities], id})}>
+    <StyledDayCard
+      changeColor={{ selectedDay, id }}
+      onClick={() => {setSelectedDay({ activities: [...activities], id }); 
+      setReloadActivities(true);
+    }}
+    >
       <p>{fullDay}</p>
     </StyledDayCard>
   );
-};
+}
 
 const StyledDayCard = styled.div`
   cursor: pointer;
@@ -17,8 +31,9 @@ const StyledDayCard = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ changeColor: { selectedDay, id } }) => selectedDay.id === id ? '#FFD37D' : '#E0E0E0'};
-  p{
+  background-color: ${({ changeColor: { selectedDay, id } }) =>
+    selectedDay.id === id ? "#FFD37D" : "#E0E0E0"};
+  p {
     font-family: Roboto;
     font-size: 14px;
     font-weight: 400;
