@@ -24,7 +24,7 @@ export function TicketProvider({ children }) {
       }
     };
     fetchData();
-  }, [buttonClicked]);
+  }, [token, buttonClicked]);
 
   let ticketProp;
   if (ticketTypes && ticket) ticketProp = { ...ticketTypes.find(({ id }) => id === ticket.ticketTypeId), ticketId: ticket.id, ticketStatus: ticket.status };

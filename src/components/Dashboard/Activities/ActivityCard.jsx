@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import UserContext from "../../../contexts/UserContext";
 import axios from "axios";
@@ -8,37 +8,32 @@ import { CiCircleCheck } from 'react-icons/ci'
 import { CiCircleRemove } from 'react-icons/ci'
 
 
-export default function Activities({ activity: { id, name, startsAt, endsAt, remainingVacancies, Participants }, setReloadActivities}){
+export default function ActivityCard({ activity: { id, name, startsAt, endsAt, remainingVacancies, Participants }, setReloadActivities }){
   const { userData: { user }, userData: { token } } = useContext(UserContext);
-  console.log(user.id, Participants.some(({userId}) => userId === user.id));
 
   async function postParticipant(activityId, token) {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/activities/participant`, {activityId}, {headers: { Authorization: `Bearer ${token}` }});
-      setReloadActivities(true)
+      setReloadActivities(previous => previous + 1);
       toast('succesfully subscribed to this activity');
     } catch ({ response: { data: { message } } }) {
       if (message === 'No result for this search!') return console.log(message);
       toast(message);
     }
-  }
+  };
   
-  const ActivityStatus = Participants.some(({userId}) => userId === user.id);
-
+  const isUserParticipating = Participants.some(({ userId }) => userId === user.id);
   const startHour = new Date(startsAt).getHours();
   const endHour = new Date(endsAt).getHours();
   return (
-    <StyledActivityCard size={endHour - startHour} remainingVacancies={remainingVacancies} color={ActivityStatus ?'#D0FFDB':'#F1F1F1'}>
+    <StyledActivityCard size={endHour - startHour} remainingVacancies={remainingVacancies} color={isUserParticipating ?'#D0FFDB':'#F1F1F1'}>
       <div>
         <p>{name}</p>
         <span>{startHour + ':' + new Date(startsAt).getMinutes() + ' - ' + endHour + ':' + new Date(endsAt).getMinutes()}</span>
       </div >
       <div onClick={remainingVacancies !== 0 ? () => postParticipant(id, token) : ''}>
-        {/* É AQUI ONDE FICA O ICONE QUE VC VAI ALTERAR BASEADO NOS DADOS */}
-        {Participants.some(({userId}) => userId === user.id) ? <Check /> : remainingVacancies === 0 ? 
-        <Full /> : <Door/>}
-        {Participants.some(({userId}) => userId === user.id) ? <p>inscrito</p> : remainingVacancies === 0 ? 
-        <p>Esgotado</p> : <p>{remainingVacancies} Vaga{remainingVacancies > 1 ? 's' : ''}</p>}
+        {isUserParticipating ? <Check /> : remainingVacancies === 0 ? <Full /> : <Door/>}
+        {isUserParticipating ? <p>inscrito</p> : remainingVacancies === 0 ? <p>Esgotado</p> : <p>{remainingVacancies} Vaga{remainingVacancies > 1 ? 's' : ''}</p>}
       </div>
     </StyledActivityCard>
   );
@@ -73,7 +68,6 @@ const StyledActivityCard = styled.div`
     }
   }
   div:nth-child(2){
-    //É AQUI ONDE FICA O ICONE QUE VC VAI ALTERAR BASEADO NOS DADOS
     display: flex;
     align-items: center;
     justify-content: center;
