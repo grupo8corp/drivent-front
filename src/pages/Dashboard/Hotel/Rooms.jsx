@@ -59,6 +59,7 @@ const RoomsContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 17px;
+    padding: 30px;
   }
   > button {
     margin-top: 46px;
