@@ -14,6 +14,8 @@ export default function Activities() {
   const [activities, setActivities] = useState(null);
   const [renderDays, setRenderDays] = useState([]);
   const [selectedDay, setSelectedDay] = useState({ id: null });
+  const [reloadActivities, setReloadActivities] = useState(false)
+  console.log(activities)
 
   useEffect(() => {
     const fetchData = async() => {
@@ -35,9 +37,20 @@ export default function Activities() {
       }
     };
     fetchData();
-  }, []);
+  }, [token, reloadActivities]);
 
-  if (!ticketProp) return <StyledTypography variant="h4">Escolha de atividades</StyledTypography>;
+  if (!ticketProp) return (
+    <>
+    <StyledTypography variant="h4">Escolha de atividades</StyledTypography>   
+      <StyledP variant="h6">Você ainda não possui um ticket.</StyledP>
+    </>
+  );
+  if(ticketProp.ticketId === 2) return (
+    <>
+    <StyledTypography variant="h4">Escolha de atividades</StyledTypography>   
+      <StyledP variant="h6">Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</StyledP>
+    </>
+  );
   
   return (
     <>
@@ -68,7 +81,7 @@ export default function Activities() {
                   <ActivitiesUl>
                     {selectedDay.activities
                       .filter(({ auditory }) => auditory === 'MAIN')
-                      .map(activity => <ActivityCard key={activity.id} activity={activity}/>)
+                      .map(activity => <ActivityCard key={activity.id} activity={activity} setReloadActivities={setReloadActivities}/>)
                     }
                   </ActivitiesUl>
                 </div>
@@ -77,7 +90,7 @@ export default function Activities() {
                   <ActivitiesUl>
                     {selectedDay.activities
                       .filter(({ auditory }) => auditory === 'LATERAL')
-                      .map(activity => <ActivityCard key={activity.id} activity={activity}/>)
+                      .map(activity => <ActivityCard key={activity.id} activity={activity} setReloadActivities={setReloadActivities}/>)
                     }
                   </ActivitiesUl>
                 </div>
@@ -86,7 +99,7 @@ export default function Activities() {
                   <ActivitiesUl>
                     {selectedDay.activities
                       .filter(({ auditory }) => auditory === 'WORKSHOP')
-                      .map(activity => <ActivityCard key={activity.id} activity={activity}/>)
+                      .map(activity => <ActivityCard key={activity.id} activity={activity} setReloadActivities={setReloadActivities}/>)
                     }
                   </ActivitiesUl>
                 </div>
@@ -97,6 +110,8 @@ export default function Activities() {
     </>
   )
 };
+
+
 
 const ActivitiesContainer = styled.div`
   padding-top: 13px;

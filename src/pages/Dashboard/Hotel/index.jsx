@@ -34,7 +34,7 @@ export default function Hotel() {
   if (!ticket) return(
     <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      <Container><StyledP variant="h6">Você ainda não possui um ticket.</StyledP></Container>
+      <StyledP variant="h6">Você ainda não possui um ticket.</StyledP>
     </>
   );
   let reserved
@@ -42,13 +42,13 @@ export default function Hotel() {
   if ((reserved && !ticketProp.includesHotel) || (ticketProp.isRemote && reserved)) return (
     <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      <Container><StyledP variant="h6">Seu ticket não inclui hotel.</StyledP></Container>
+      <StyledP variant="h6">Seu ticket não inclui hotel.</StyledP>
     </>
   );
   if (!reserved) return (
     <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      <Container><StyledP variant="h6">Você ainda não efetuou o pagamento para reservar um hotel.</StyledP></Container>
+      <StyledP variant="h6">Você ainda não efetuou o pagamento para reservar um hotel.</StyledP>
     </>
   );
 

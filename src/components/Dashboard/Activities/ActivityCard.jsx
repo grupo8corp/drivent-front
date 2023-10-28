@@ -1,33 +1,55 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import styled from "styled-components";
 import UserContext from "../../../contexts/UserContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { BiExit } from 'react-icons/bi';
+import { CiCircleCheck } from 'react-icons/ci'
+import { CiCircleRemove } from 'react-icons/ci'
 
-export default function({ activity: { id, name, startsAt, endsAt, remainingVacancies, Participants } }){
-  const { userData: { user } } = useContext(UserContext);
+
+export default function Activities({ activity: { id, name, startsAt, endsAt, remainingVacancies, Participants }, setReloadActivities}){
+  const { userData: { user }, userData: { token } } = useContext(UserContext);
   console.log(user.id, Participants.some(({userId}) => userId === user.id));
+
+  async function postParticipant(activityId, token) {
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/activities/participant`, {activityId}, {headers: { Authorization: `Bearer ${token}` }});
+      setReloadActivities(true)
+      toast('succesfully subscribed to this activity');
+    } catch ({ response: { data: { message } } }) {
+      if (message === 'No result for this search!') return console.log(message);
+      toast(message);
+    }
+  }
+  
+  const ActivityStatus = Participants.some(({userId}) => userId === user.id);
 
   const startHour = new Date(startsAt).getHours();
   const endHour = new Date(endsAt).getHours();
   return (
-    <StyledActivityCard size={endHour - startHour} remainingVacancies={remainingVacancies}>
+    <StyledActivityCard size={endHour - startHour} remainingVacancies={remainingVacancies} color={ActivityStatus ?'#D0FFDB':'#F1F1F1'}>
       <div>
         <p>{name}</p>
         <span>{startHour + ':' + new Date(startsAt).getMinutes() + ' - ' + endHour + ':' + new Date(endsAt).getMinutes()}</span>
-      </div>
-      <div>
+      </div >
+      <div onClick={remainingVacancies !== 0 ? () => postParticipant(id, token) : ''}>
         {/* É AQUI ONDE FICA O ICONE QUE VC VAI ALTERAR BASEADO NOS DADOS */}
-        <p>{remainingVacancies === 0 ? 'Esgotado' : `${remainingVacancies} Vaga${remainingVacancies > 1 ? 's' : ''}`}</p>
+        {Participants.some(({userId}) => userId === user.id) ? <Check /> : remainingVacancies === 0 ? 
+        <Full /> : <Door/>}
+        {Participants.some(({userId}) => userId === user.id) ? <p>inscrito</p> : remainingVacancies === 0 ? 
+        <p>Esgotado</p> : <p>{remainingVacancies} Vaga{remainingVacancies > 1 ? 's' : ''}</p>}
       </div>
     </StyledActivityCard>
   );
-};
+}
 
 const StyledActivityCard = styled.div`
   cursor: pointer;
   display: flex;
   min-height: ${({ size }) => `${size*80}px`};
   border-radius: 5px;
-  background-color: #F1F1F1;
+  background-color: ${props => props.color};;
   position: relative;
   div:nth-child(1){
     p{
@@ -63,10 +85,24 @@ const StyledActivityCard = styled.div`
     border-left: solid 2px #CFCFCF;
     p{
       font-family: Roboto;
-      font-size: 9px;
+      font-size: 12px;
       font-weight: 400;
       line-height: 11px;
       color: ${({ remainingVacancies }) => remainingVacancies === 0 ? '#CC6666' : '#078632'}
     }
   }
 `;
+
+export const Door = styled(BiExit)`
+  color: #078632;
+  font-size: 25px;
+`
+
+export const Check = styled(CiCircleCheck)`
+  color: #078632;
+  font-size: 25px;
+`
+export const Full = styled(CiCircleRemove)`
+  color: #CC6666;
+  font-size: 25px;
+`
