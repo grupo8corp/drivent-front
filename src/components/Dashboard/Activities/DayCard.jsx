@@ -1,21 +1,11 @@
-import { useEffect } from "react";
 import styled from "styled-components";
 
-export default function DayCard({ setReloadActivities,
-  activities,
-  dayState: { selectedDay, setSelectedDay },
-  day: { fullDay, id },
-}) {
-  // useEffect(() => {
-  //   setSelectedDay({ activities: [...activities], id })
-  // }, [])
-
+export default function DayCard({ activities, dayState: { selectedDay, setSelectedDay }, day: { fullDay, id } }) {
   return (
     <StyledDayCard
       changeColor={{ selectedDay, id }}
-      onClick={() => {setSelectedDay({ activities: [...activities], id }); 
-      setReloadActivities(true);
-    }}
+      onClick={() => setSelectedDay({ activities: [...activities], id })
+    }
     >
       <p>{fullDay}</p>
     </StyledDayCard>

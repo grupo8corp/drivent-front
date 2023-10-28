@@ -14,8 +14,7 @@ export default function Activities() {
   const [activities, setActivities] = useState(null);
   const [renderDays, setRenderDays] = useState([]);
   const [selectedDay, setSelectedDay] = useState({ id: null });
-  const [reloadActivities, setReloadActivities] = useState(false)
-  console.log(activities)
+  const [reloadActivities, setReloadActivities] = useState(0);
 
   useEffect(() => {
     const fetchData = async() => {
@@ -69,7 +68,7 @@ export default function Activities() {
               {renderDays.map((day) => <DayCard 
                 key={day.id} 
                 day={day} 
-                dayState={{selectedDay, setSelectedDay}} 
+                dayState={{ selectedDay, setSelectedDay }} 
                 activities={activities.filter(({ startsAt }) => day.monthDay === new Date(startsAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }))}
               />)}
             </DaysWrapper>
