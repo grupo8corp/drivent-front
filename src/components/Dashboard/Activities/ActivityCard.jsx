@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import UserContext from "../../../contexts/UserContext";
 import axios from "axios";
@@ -10,10 +10,14 @@ import { CiCircleRemove } from 'react-icons/ci'
 
 export default function ActivityCard({ activity: { id, name, startsAt, endsAt, remainingVacancies, Participants }, setReloadActivities }){
   const { userData: { user }, userData: { token } } = useContext(UserContext);
+  const [participantFront, setParticipantFront] = useState(false);
 
+  const isUserParticipating = Participants.some(({ userId }) => userId === user.id);
   async function postParticipant(activityId, token) {
+    if (isUserParticipating || remainingVacancies === 0) return;
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/activities/participant`, {activityId}, {headers: { Authorization: `Bearer ${token}` }});
+      setParticipantFront(true);
       setReloadActivities(previous => previous + 1);
       toast('succesfully subscribed to this activity');
     } catch ({ response: { data: { message } } }) {
@@ -22,18 +26,17 @@ export default function ActivityCard({ activity: { id, name, startsAt, endsAt, r
     }
   };
   
-  const isUserParticipating = Participants.some(({ userId }) => userId === user.id);
   const startHour = new Date(startsAt).getHours();
   const endHour = new Date(endsAt).getHours();
   return (
-    <StyledActivityCard size={endHour - startHour} remainingVacancies={remainingVacancies} color={isUserParticipating ?'#D0FFDB':'#F1F1F1'}>
+    <StyledActivityCard size={endHour - startHour} remainingVacancies={remainingVacancies} color={(participantFront || isUserParticipating) ?'#D0FFDB':'#F1F1F1'}>
       <div>
         <p>{name}</p>
         <span>{startHour + ':' + new Date(startsAt).getMinutes() + ' - ' + endHour + ':' + new Date(endsAt).getMinutes()}</span>
       </div >
       <div onClick={remainingVacancies !== 0 ? () => postParticipant(id, token) : ''}>
-        {isUserParticipating ? <Check /> : remainingVacancies === 0 ? <Full /> : <Door/>}
-        {isUserParticipating ? <p>inscrito</p> : remainingVacancies === 0 ? <p>Esgotado</p> : <p>{remainingVacancies} Vaga{remainingVacancies > 1 ? 's' : ''}</p>}
+        {participantFront || isUserParticipating ? <Check /> : remainingVacancies === 0 ? <Full /> : <Door/>}
+        {participantFront || isUserParticipating ? <p>inscrito</p> : remainingVacancies === 0 ? <p>Esgotado</p> : <p>{remainingVacancies} Vaga{remainingVacancies > 1 ? 's' : ''}</p>}
       </div>
     </StyledActivityCard>
   );
@@ -44,7 +47,7 @@ const StyledActivityCard = styled.div`
   display: flex;
   min-height: ${({ size }) => `${size*80}px`};
   border-radius: 5px;
-  background-color: ${props => props.color};;
+  background-color: ${({ color }) => color};;
   position: relative;
   div:nth-child(1){
     p{
