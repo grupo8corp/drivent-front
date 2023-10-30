@@ -16,6 +16,8 @@ export default function Activities() {
   const [selectedDay, setSelectedDay] = useState({ id: null });
   const [reloadActivities, setReloadActivities] = useState(0);
 
+  console.log(ticketProp);
+
   useEffect(() => {
     const fetchData = async() => {
       try {
@@ -51,9 +53,9 @@ export default function Activities() {
       {(ticketProp.ticketStatus !== 'PAID') 
       ?
         <StyledP>Você precisa ter confirmado pagamento antes de fazer a escolha de atividades</StyledP>
-      : (ticketProp.isRemote) 
+      : (ticketProp.isRemote || !ticketProp.includesHotel) 
         ?
-          <StyledP>Como você escolheu a modalidade online, não precisa escolher atividades.</StyledP>
+          <StyledP>Como você escolheu a modalidade {ticketProp.isRemote ? 'online' : !ticketProp.includesHotel && 'sem hotel'}, não precisa escolher atividades.</StyledP>
         :
           <ActivitiesContainer>
             {selectedDay.id === null && <h5>Primeiro, filtre pelo dia do evento:</h5>}
