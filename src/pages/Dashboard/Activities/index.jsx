@@ -9,7 +9,7 @@ import DayCard from "../../../components/Dashboard/Activities/DayCard";
 import ActivityCard from "../../../components/Dashboard/Activities/ActivityCard";
 
 export default function Activities() {
-  const { ticketProp } = useContext(TicketContext);
+  const { ticket, ticketProp } = useContext(TicketContext);
   const { userData: { token } } = useContext(UserContext);
   const [activities, setActivities] = useState(null);
   const [renderDays, setRenderDays] = useState([]);
@@ -38,19 +38,12 @@ export default function Activities() {
     fetchData();
   }, [token, reloadActivities]);
 
-  if (!ticketProp) return (
+  if (!ticket) return(
     <>
-    <StyledTypography variant="h4">Escolha de atividades</StyledTypography>   
+      <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
       <StyledP variant="h6">Você ainda não possui um ticket.</StyledP>
     </>
   );
-  if(ticketProp.ticketId === 2) return (
-    <>
-    <StyledTypography variant="h4">Escolha de atividades</StyledTypography>   
-      <StyledP variant="h6">Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</StyledP>
-    </>
-  );
-  
   return (
     <>
       <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
