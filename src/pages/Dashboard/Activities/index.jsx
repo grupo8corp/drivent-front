@@ -16,8 +16,6 @@ export default function Activities() {
   const [selectedDay, setSelectedDay] = useState({ id: null });
   const [reloadActivities, setReloadActivities] = useState(0);
 
-  console.log(ticketProp);
-
   useEffect(() => {
     const fetchData = async() => {
       try {
